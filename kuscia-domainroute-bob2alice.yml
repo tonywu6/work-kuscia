@@ -1,0 +1,20 @@
+apiVersion: kuscia.secretflow/v1alpha1
+kind: ClusterDomainRoute
+metadata:
+  name: kuscia-domain-bob-to-alice
+spec:
+  source: kuscia-domain-bob
+  destination: kuscia-domain-alice
+  interConnProtocol: kuscia
+  endpoint:
+    host: kuscia-alice.kuscia-domain-alice.svc.cluster.local
+    ports:
+      - name: http
+        protocol: HTTP
+        pathPrefix: ''
+        isTLS: false
+        port: 1080
+  authenticationType: Token
+  tokenConfig:
+    tokenGenMethod: RSA-GEN
+    rollingUpdatePeriod: 600

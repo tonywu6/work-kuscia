@@ -24,6 +24,7 @@ import (
 	"path/filepath"
 	"sync/atomic"
 
+	"gopkg.in/yaml.v3"
 	corev1 "k8s.io/api/core/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -242,7 +243,8 @@ func InitDependencies(ctx context.Context, kusciaConf confloader.KusciaConfig) *
 		nlog.Errorf("Load config by configloader failed: %s", err)
 	}
 
-	nlog.Debugf("After config loader handle, kuscia config is %+v", dependencies.KusciaConfig)
+	confText, _ := yaml.Marshal(dependencies.KusciaConfig)
+	nlog.Debugf("After config loader handle, kuscia config is \n%s", string(confText))
 
 	// make runtime dir
 	err = EnsureDir(dependencies)

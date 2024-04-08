@@ -10,21 +10,21 @@ data:
 
     # 节点ID
     # 示例: domainID: alice
-    domainID: {{.DOMAIN_ID}}
+    domainID: alice.kuscia.minikube
     # 节点私钥配置, 用于节点间的通信认证(通过 2 方的证书来生成通讯的身份令牌), 节点应用的证书签发(为了加强通讯安全性，kuscia 会给每一个任务引擎分配 MTLS 证书，不论引擎访问其他模块（包括外部），还是其他模块访问引擎，都走 MTLS 通讯，以免内部攻破引擎。)
     # 注意: 目前节点私钥仅支持 pkcs#1 格式的: "BEGIN RSA PRIVATE KEY/END RSA PRIVATE KEY"
     # 执行命令 "docker run -it --rm secretflow-registry.cn-hangzhou.cr.aliyuncs.com/secretflow/kuscia scripts/deploy/generate_rsa_key.sh" 生成私钥
-    domainKeyData: {{.DOMAIN_KEY_DATA}}
+    domainKeyData: LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JSUV2UUlCQURBTkJna3Foa2lHOXcwQkFRRUZBQVNDQktjd2dnU2pBZ0VBQW9JQkFRREdsU0RSQWVDUUwzaUwKYUxRRGlBUlpLU1Y1UjFiazc0ZjlzekZtb052UG1BSE9TK0tmbmhpNytFTXRzVVBEajFJVWhUMkdDM2xpOUFkLwplY25rMitXVGhZYTIrdlYva0M0S0xNYXhhUENLajBPU1NCa0xtZDVZV1hCbTU5STVFMGQ5OHk2NHlpdUw5ek1uCmlFcXBGMEVsVER4QnNXUXEvZUpHQmFFalE2c1MwRzdSMXdWZkRpNGdqV2xWWFdONGN5d3BLMGVrTWY0a3hQNnEKUHZjS21JTERZdmg2OVJZNDJRZlZ4M0d4SDZTVytxcFlab0d4RWJRK2Z3U2t1T3JVTmQvcmsxK0ZXN2J4MlBXQgo1WEx4RzZIMU01MGwyb25ETCtSYlljQlZURWVaUHFMLzdBOVdjak1vU2NqelZmUktBeXR3dkVsUSsxdkZ6RkV2CitrV2NiRnZmQWdNQkFBRUNnZ0VBS2hUd0gxcUdmQWVUUS9lc0xoTmsySUFmc05PdFZsWnNPeGIrSVFGMWswaGoKR1pSN01kZ081Y1oyZGZoYW85WjdUbDN0NjdvQ3Z6VjNZVXd0dkpIYzFLWTNKZytJZHIvWEFkRDdTaDB5M0NuLwo1Ny9manRYTWlHeHJwV0w2Nloxc1NRUi9vaWsxa1RPUlk0OCtReGJxZHp6d2gvdFBmc3pPWm9oSzNXNDVrb0s1Cll0RXFGREtaUnZON1J0UjBobnJKWHZRQ1JiQ3dKNXFlcGdyMjVEbnJzYVd0V0ZJNE1tRXBlYk9JcWRuU1lid0MKVEpBLyttY3dHYUhlZjEvS3VtT0VUUi9MVFZzUmJhcS9VK05QSC83WEJ5SHdoWUtuV2xKclhlVkQwRG5IZzVRUQplZ29MSVpUa3IwY1BOSEpmMjVBSGVJYkJFeDFjOVBWcXpZeCtFVFBvQVFLQmdRRG0zUmZySEVoVUk4V0MyeGlKCm94TnFRVmkrcTZXN3VacFB4VFQ1SjJCSnE5Y0h0ZTAxUTdqS0E0dmtmVGhsU0hEOENhdEpxMXZ4VWVKR1cwUmoKNThONCsvNWE2QUsrUzNjeGR3czVaOFhST3NLN3h1TGNKTlNqbnRiaC8yVmpTV1J6eHZDeE56aW9JREdtN0F6RQpqbTFIU040QlBhZ0U5SDFHQUxDN1dqeU1Ed0tCZ1FEY05FSFFiZVRkcFQ4QzVWVno0WHFaVWd1Nm9xc2VsRUlwCmt0NzlCSWdtbDlENUVJcUdDTGE3am5RaWZHa1dHUzlia2FJMnBXNHh6WnUxYW9UYllaRVpXM09KRjFUZFd2TTQKM0RSckJpRGtyR24wc3ZiWjZmazdJSU1yTmhnQXJJckY5NXUyK2hBakk1bnVOQllWaFoyQTVyaWwrZjJEVHpOVApGOXB1azlpak1RS0JnUURhaFRJTG9CU3lWNzJ2YzlVUkNxUG84bnVlMXZnajdiV3JoZjN6VEJzdkFKR2p3Y2NLCm9OUjdtc25DZCtoMnJoQUw4TmNKLzBJaTlKL2FlcThNWmFhM2tNYWNvM2xkU0M5RlNlbjg1MFh1R3RHU1Rkb1UKQ0dTaGowclVWaHRRMUhwWndGZTVWb3l4VHUvUWtTUXd0S09wVXNhWXBCU3l3LzBEMHNsMlBSNk1id0tCZ0Y2SAp1SEVubkFaaWQraGdWd3pHRVFGY3JWaFRtSzRwNnpVNXJheGtrNll0cWpJaG5iWG9hN21jYjlLV0llNndwUm5rCkxRVFVnN2V4a2xTUkE3UEI4SzQ0Q2lNaDl2YUhvcjRZR2hDUHN2TTM2TXg1UDJ0US9BTWI4L05LNTRieWl5aHQKSVZXdGg5dnQzcGpabDFscDRMR0RXbVUyS2xTQ1hZQWdUMDhFL1EwaEFvR0FPU0VleEc5aDRrVFlnMHhpaGFhTgpnTU1Oa1hTMHk4bWtFNERFU3ZHSW5tVFdUSm5uSzFDRGFjRy9VUitNbXlFbGQvU2wyZ2JDUHB4UFhLSFJ5ODhzClRCYlBTRUxzak9nN2VnNFg3UjFHRHNzWEZsRWs5ajdDZFp0RmRyNEllTzAwSjB4OVFwRXRwWVJ5dlM2djF1RTgKdkFQODYrYm1uR3h3WWtqSU55cGVoem89Ci0tLS0tRU5EIFBSSVZBVEUgS0VZLS0tLS0K
 
     # 日志级别 INFO、DEBUG、WARN
-    logLevel: INFO
+    logLevel: DEBUG
 
     # runc or runk
     runtime: runk
 
     runk:
       # 任务调度到指定的机构 K8s namespace 下
-      namespace: autonomy-alice
+      namespace: alice1
       # K8s 集群的 pod dns 配置, 用于解析节点的应用域名, dns 的地址为 pod service 地址, 此处以 "1.1.1.1" 为例
       dnsServers:
       # - kuscia-dns-lb-server
@@ -36,7 +36,7 @@ data:
     capacity:
       cpu: 4
       memory: 4Gi
-      storage: 100Gi
+      storage: 20Gi
 
     # agent 镜像配置, 使用私有仓库存储镜像时配置(默认无需配置)
     image:

@@ -22,12 +22,14 @@ import (
 	"sync/atomic"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 
 	"github.com/secretflow/kuscia/pkg/common"
 	"github.com/secretflow/kuscia/pkg/confmanager/handler/httphandler/certificate"
 	cmservice "github.com/secretflow/kuscia/pkg/confmanager/service"
 	ecode "github.com/secretflow/kuscia/pkg/datamesh/errorcode"
 	apiconfig "github.com/secretflow/kuscia/pkg/kusciaapi/config"
+	domainmetrics "github.com/secretflow/kuscia/pkg/kusciaapi/handler/httphandler"
 	"github.com/secretflow/kuscia/pkg/kusciaapi/handler/httphandler/domain"
 	"github.com/secretflow/kuscia/pkg/kusciaapi/handler/httphandler/domaindata"
 	"github.com/secretflow/kuscia/pkg/kusciaapi/handler/httphandler/domaindatagrant"
@@ -419,6 +421,16 @@ func (s *httpServerBean) registerGroupRoutes(e framework.ConfBeanRegistry, bean 
 				},
 			},
 		},
+		{
+			Group: "api/v0/domains/metrics",
+			Routes: []*router.Router{
+				{
+					HTTPMethod:   http.MethodGet,
+					RelativePath: "",
+					Handlers:     []gin.HandlerFunc{domainmetrics.NewDomainMetricsHandler()},
+				},
+			},
+		},
 	}
 
 	// register router groups to httpEg
@@ -428,6 +440,8 @@ func (s *httpServerBean) registerGroupRoutes(e framework.ConfBeanRegistry, bean 
 			group.Handle(route.HTTPMethod, route.RelativePath, route.Handlers...)
 		}
 	}
+
+	zap.S().Debug("routes", zap.Any("routes", bean.Routes()))
 }
 
 func newCertService(config *apiconfig.KusciaAPIConfig) cmservice.ICertificateService {

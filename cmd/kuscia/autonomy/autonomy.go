@@ -106,6 +106,7 @@ func Run(ctx context.Context, configFile string, onlyControllers bool) error {
 		modules.RunSsExporter(runCtx, cancel, conf)
 		modules.RunMetricExporter(runCtx, cancel, conf)
 		utils.SetupPprof(conf.Debug, conf.DebugPort, false)
+		modules.RunKusciaAPI(runCtx, cancel, conf)
 	}
 	<-runCtx.Done()
 	return nil

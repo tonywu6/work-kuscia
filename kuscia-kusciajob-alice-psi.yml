@@ -1,0 +1,63 @@
+apiVersion: kuscia.secretflow/v1alpha1
+kind: KusciaJob
+metadata:
+  namespace: cross-domain
+  name: kusciajob-psi-1
+spec:
+  initiator: kuscia-domain-alice
+  scheduleMode: BestEffort
+  maxParallelism: 2
+  tasks:
+    - taskID: kusciajob-psi-1
+      alias: psi-1
+      priority: 100
+      taskInputConfig: |-
+        {
+          "sf_datasource_config": {
+            "kuscia-domain-alice": {
+              "id": "default-dp-data-source"
+            },
+            "kuscia-domain-bob": {
+              "id": "default-dp-data-source"
+            }
+          },
+          "sf_cluster_desc": {
+            "parties": ["kuscia-domain-alice", "kuscia-domain-bob"],
+            "devices": [{
+              "name": "spu",
+              "type": "spu",
+              "parties": ["kuscia-domain-alice", "kuscia-domain-bob"],
+              "config": "{\"runtime_config\":{\"protocol\":\"REF2K\",\"field\":\"FM64\"},\"link_desc\":{\"connect_retry_times\":60,\"connect_retry_interval_ms\":1000,\"brpc_channel_protocol\":\"http\",\"brpc_channel_connection_type\":\"pooled\",\"recv_timeout_ms\":1200000,\"http_timeout_ms\":1200000}}"
+            }, {
+              "name": "heu",
+              "type": "heu",
+              "parties": ["kuscia-domain-alice", "kuscia-domain-bob"],
+              "config": "{\"mode\": \"PHEU\", \"schema\": \"paillier\", \"key_size\": 2048}"
+            }],
+            "ray_fed_config": {
+              "cross_silo_comm_backend": "brpc_link"
+            }
+          },
+          "sf_node_eval_param": {
+            "domain": "data_prep",
+            "name": "psi",
+            "version": "0.0.2",
+            "attr_paths": ["input/receiver_input/key", "input/sender_input/key", "protocol", "ecdh_curve"],
+            "attrs": [{
+              "ss": ["id1"]
+            }, {
+              "ss": ["id2"]
+            }, {
+              "s": "PROTOCOL_ECDH"
+            }, {
+              "s": "CURVE_FOURQ"
+            }]
+          },
+          "sf_input_ids": ["demo-table","demo-table"],
+          "sf_output_ids": ["psi-1-out"],
+          "sf_output_uris": ["psi-1-out.csv"]
+        }
+      appImage: secretflow-arm64
+      parties:
+        - domainID: kuscia-domain-alice
+        - domainID: kuscia-domain-bob

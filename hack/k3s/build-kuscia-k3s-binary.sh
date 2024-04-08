@@ -17,7 +17,7 @@ set -e -x
 
 cd $(dirname $0)/..
 
-. ./scripts/version.sh
+# . ./scripts/version.sh
 
 mkdir -p build/data
 mkdir -p build/static
@@ -89,14 +89,14 @@ TAGS="static_build libsqlite3 ctrd apparmor seccomp netcgo osusergo providerless
 mkdir -p bin
 
 if [ ${ARCH} = armv7l ] || [ ${ARCH} = arm ]; then
-    export GOARCH="arm"
-    export GOARM="7"
-    # Context: https://github.com/golang/go/issues/58425#issuecomment-1426415912
-    export GOEXPERIMENT=nounified
+  export GOARCH="arm"
+  export GOARM="7"
+  # Context: https://github.com/golang/go/issues/58425#issuecomment-1426415912
+  export GOEXPERIMENT=nounified
 fi
 
 if [ ${ARCH} = s390x ]; then
-    export GOARCH="s390x"
+  export GOARCH="s390x"
 fi
 
 echo Building k3s

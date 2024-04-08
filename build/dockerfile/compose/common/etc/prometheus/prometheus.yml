@@ -1,0 +1,38 @@
+global:
+  scrape_interval: 5s
+  external_labels:
+    monitor: 'kuscia-prometheus'
+
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'kuscia-1'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['kuscia-1:9091']
+    metrics_path: /metrics
+    scheme: http
+
+  - job_name: 'kuscia-2'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['kuscia-2:9091']
+    metrics_path: /metrics
+    scheme: http
+
+  - job_name: 'kuscia-1-domain'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['kuscia-1:8082']
+    metrics_path: /api/v0/domains/metrics
+    scheme: http
+
+  - job_name: 'kuscia-2-domain'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['kuscia-2:8082']
+    metrics_path: /api/v0/domains/metrics
+    scheme: http

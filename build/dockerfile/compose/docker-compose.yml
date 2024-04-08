@@ -1,0 +1,125 @@
+services:
+  kuscia-1:
+    image: tonywu6/kuscia-bootstrap:linux-arm64
+    build:
+      context: ../../../
+      dockerfile: ./build/dockerfile/compose/kuscia-bootstrap.Dockerfile
+
+    networks:
+      - kuscia
+    ports:
+      # Kubernetes API Server
+      - '1080'
+      # Kuscia API HTTP
+      - '8082'
+      # Kuscia API gRPC
+      - '8083'
+      # Prometheus
+      - '9091'
+
+    privileged: true
+
+    command:
+      - /home/kuscia/bin/kuscia-bootstrap
+
+      - --self
+      - kuscia-1
+
+      - --peer
+      - kuscia-2
+
+      - --load-image
+      - /home/kuscia/mnt/public/secretflow-image.yml
+
+      # - --load-data
+      # - /home/kuscia/mnt/private/demo-table.yml
+
+    volumes:
+      - type: volume
+        source: containerd1
+        target: /home/kuscia/containerd
+      - type: volume
+        source: shared
+        target: /home/kuscia/mnt/shared
+      - type: bind
+        source: ./common/home/kuscia/mnt/public
+        target: /home/kuscia/mnt/public
+        read_only: true
+
+  kuscia-2:
+    image: tonywu6/kuscia-bootstrap:linux-arm64
+    build:
+      context: ../../../
+      dockerfile: ./build/dockerfile/compose/kuscia-bootstrap.Dockerfile
+
+    networks:
+      - kuscia
+    ports:
+      # Kubernetes API Server
+      - '1080'
+      # Kuscia API HTTP
+      - '8082'
+      # Kuscia API gRPC
+      - '8083'
+      # Prometheus
+      - '9091'
+
+    privileged: true
+
+    command:
+      - /home/kuscia/bin/kuscia-bootstrap
+
+      - --self
+      - kuscia-2
+
+      - --peer
+      - kuscia-1
+
+      - --load-image
+      - /home/kuscia/mnt/public/secretflow-image.yml
+
+      # - --load-data
+      # - /home/kuscia/mnt/private/demo-table.yml
+
+    volumes:
+      - type: volume
+        source: containerd2
+        target: /home/kuscia/containerd
+      - type: volume
+        source: shared
+        target: /home/kuscia/mnt/shared
+      - type: bind
+        source: ./common/home/kuscia/mnt/public
+        target: /home/kuscia/mnt/public
+        read_only: true
+
+  prometheus:
+    image: prom/prometheus
+    command: --config.file=/etc/prometheus/prometheus.yml --log.level=debug
+    networks:
+      - kuscia
+    ports:
+      - '9090:9090'
+    volumes:
+      - ./common/etc/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana-enterprise:latest
+    networks:
+      - kuscia
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./common/etc/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./common/etc/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - type: bind
+        source: ./common/var/lib/grafana
+        target: /var/lib/grafana
+
+networks:
+  kuscia:
+
+volumes:
+  containerd1:
+  containerd2:
+  shared:

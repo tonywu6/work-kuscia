@@ -7,7 +7,7 @@ spec:
   replicas: 2
   selector:
     matchLabels:
-      app: kuscia-autonomy-alice
+      app: kuscia-alice
   template:
     metadata:
       labels:

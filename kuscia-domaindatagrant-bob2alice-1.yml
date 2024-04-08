@@ -1,0 +1,11 @@
+apiVersion: kuscia.secretflow/v1alpha1
+kind: DomainDataGrant
+metadata:
+  labels:
+    kuscia.secretflow/domaindataid: demo-table
+  name: demo-table
+  namespace: kuscia-domain-bob
+spec:
+  author: kuscia-domain-bob
+  domainDataID: demo-table
+  grantDomain: kuscia-domain-alice
