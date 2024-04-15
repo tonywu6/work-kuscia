@@ -1,19 +1,3 @@
-FROM gcc:7.4.0 as build-proot
-
-ARG PROOT_VERSION=v5.4.0
-
-RUN apt-get update
-RUN apt-get install -y \
-  git clang-tools-6.0 curl docutils-common gdb lcov libarchive-dev libtalloc-dev strace swig uthash-dev xsltproc
-
-RUN git clone https://github.com/proot-me/proot /src \
-  --depth 1 \
-  --branch ${PROOT_VERSION}
-
-WORKDIR /src
-
-RUN LDFLAGS="${LDFLAGS} -static" make -C src proot GIT=false
-
 FROM alpine:3.14 as source-tree
 
 RUN apk add --no-cache git
@@ -36,8 +20,11 @@ RUN go mod download
 COPY --from=source-tree /src/ ./
 
 RUN go build -o build/apps/kuscia/kuscia ./cmd/kuscia
+RUN go build -o build/apps/kuscia/kuscia-bootstrap ./cmd/bootstrap
 
 FROM tonywu6/kuscia-envoy:linux-arm64 as image-kuscia-envoy
+
+FROM tonywu6/proot:linux-arm64 as image-proot
 
 FROM rancher/k3s:v1.26.14-k3s1-arm64 as image-k3s
 
@@ -58,7 +45,7 @@ WORKDIR /home/kuscia
 
 RUN mkdir -p bin
 
-COPY --from=build-proot /src/src/proot /home/kuscia/bin/proot
+COPY --from=image-proot /src/src/proot /home/kuscia/bin/proot
 COPY --from=image-k3s /bin/aux /bin/aux
 COPY --from=image-k3s /bin/k3s \
   /bin/containerd \
@@ -86,6 +73,7 @@ RUN cd bin \
   && ln -s cni portmap
 
 COPY --from=build-kuscia /src/build/apps/kuscia/kuscia bin/
+COPY --from=build-kuscia /src/build/apps/kuscia/kuscia-bootstrap bin/
 COPY --from=image-kuscia-envoy /src/bazel-bin/envoy bin/
 
 COPY crds/v1alpha1 crds/v1alpha1

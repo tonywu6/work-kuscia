@@ -1,19 +1,26 @@
 services:
+  otel-collector:
+    image: jaegertracing/all-in-one:1.56
+    networks:
+      - kuscia
+    ports:
+      - '16686:16686'
+
   kuscia-1:
-    image: tonywu6/kuscia-bootstrap:linux-arm64
+    image: tonywu6/kuscia:linux-arm64
     build:
       context: ../../../
-      dockerfile: ./build/dockerfile/compose/kuscia-bootstrap.Dockerfile
+      dockerfile: ./build/dockerfile/kuscia-arm64.Dockerfile
 
     networks:
       - kuscia
     ports:
-      # Kubernetes API Server
-      - '1080'
-      # Kuscia API HTTP
-      - '8082'
-      # Kuscia API gRPC
-      - '8083'
+      # # Kubernetes API Server
+      # - '1080'
+      # # Kuscia API HTTP
+      # - '8082'
+      # # Kuscia API gRPC
+      # - '8083'
       # Prometheus
       - '9091'
 
@@ -28,13 +35,16 @@ services:
       - --peer
       - kuscia-2
 
-      - --load-image
-      - /home/kuscia/mnt/public/secretflow-image.yml
+      # - --load-image
+      # - /home/kuscia/mnt/public/secretflow-image.yml
 
       # - --load-data
       # - /home/kuscia/mnt/private/demo-table.yml
 
     volumes:
+      # - type: volume
+      #   source: var1
+      #   target: /home/kuscia/var
       - type: volume
         source: containerd1
         target: /home/kuscia/containerd
@@ -47,20 +57,20 @@ services:
         read_only: true
 
   kuscia-2:
-    image: tonywu6/kuscia-bootstrap:linux-arm64
+    image: tonywu6/kuscia:linux-arm64
     build:
       context: ../../../
-      dockerfile: ./build/dockerfile/compose/kuscia-bootstrap.Dockerfile
+      dockerfile: ./build/dockerfile/kuscia-arm64.Dockerfile
 
     networks:
       - kuscia
     ports:
-      # Kubernetes API Server
-      - '1080'
-      # Kuscia API HTTP
-      - '8082'
-      # Kuscia API gRPC
-      - '8083'
+      # # Kubernetes API Server
+      # - '1080'
+      # # Kuscia API HTTP
+      # - '8082'
+      # # Kuscia API gRPC
+      # - '8083'
       # Prometheus
       - '9091'
 
@@ -75,13 +85,16 @@ services:
       - --peer
       - kuscia-1
 
-      - --load-image
-      - /home/kuscia/mnt/public/secretflow-image.yml
+      # - --load-image
+      # - /home/kuscia/mnt/public/secretflow-image.yml
 
       # - --load-data
       # - /home/kuscia/mnt/private/demo-table.yml
 
     volumes:
+      # - type: volume
+      #   source: var2
+      #   target: /home/kuscia/var
       - type: volume
         source: containerd2
         target: /home/kuscia/containerd
@@ -123,3 +136,5 @@ volumes:
   containerd1:
   containerd2:
   shared:
+  # var1:
+  # var2:

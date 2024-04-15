@@ -22,17 +22,3 @@ scrape_configs:
       - targets: ['kuscia-2:9091']
     metrics_path: /metrics
     scheme: http
-
-  - job_name: 'kuscia-1-domain'
-    scrape_interval: 5s
-    static_configs:
-      - targets: ['kuscia-1:8082']
-    metrics_path: /api/v0/domains/metrics
-    scheme: http
-
-  - job_name: 'kuscia-2-domain'
-    scrape_interval: 5s
-    static_configs:
-      - targets: ['kuscia-2:8082']
-    metrics_path: /api/v0/domains/metrics
-    scheme: http
