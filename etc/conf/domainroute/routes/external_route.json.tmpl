@@ -60,6 +60,15 @@
       ]
     }
   ],
+  "request_headers_to_add": [
+    {
+      "header": {
+        "key": "x-envoy-force-trace",
+        "value": "true"
+      },
+      "append_action": "ADD_IF_ABSENT"
+    }
+  ],
   "response_headers_to_add": [
     {
       "header": {

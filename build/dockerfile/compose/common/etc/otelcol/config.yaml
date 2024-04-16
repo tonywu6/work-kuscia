@@ -1,0 +1,20 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+  zipkin:
+
+exporters:
+  otlphttp:
+    endpoint: http://jaeger:4318
+  zipkin:
+    endpoint: http://zipkin:9411/api/v2/spans
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp, zipkin]
+      exporters: [otlphttp, zipkin]

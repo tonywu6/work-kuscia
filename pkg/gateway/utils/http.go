@@ -16,6 +16,7 @@ package utils
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -23,6 +24,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
+	"go.opentelemetry.io/otel"
 )
 
 type HTTPParam struct {
@@ -71,10 +75,10 @@ func ParseURL(url string) (string, string, uint32, string, error) {
 	return protocol, host, uint32(port), path, nil
 }
 
-func DoHTTPWithRetry(in interface{}, out interface{}, hp *HTTPParam, waitTime time.Duration, maxRetryTimes int) error {
+func DoHTTPWithRetry(ctx context.Context, in interface{}, out interface{}, hp *HTTPParam, waitTime time.Duration, maxRetryTimes int) error {
 	var err error
 	for i := 0; i < maxRetryTimes; i++ {
-		err = DoHTTP(in, out, hp)
+		err = DoHTTP(ctx, in, out, hp)
 		if err == nil {
 			return nil
 		}
@@ -83,11 +87,16 @@ func DoHTTPWithRetry(in interface{}, out interface{}, hp *HTTPParam, waitTime ti
 	return err
 }
 
-func DoHTTP(in interface{}, out interface{}, hp *HTTPParam) error {
+func DoHTTP(ctx context.Context, in interface{}, out interface{}, hp *HTTPParam) error {
+	tracer := otel.Tracer("kuscia-gateway")
+
+	ctx, span := tracer.Start(ctx, fmt.Sprintf("%s %s", hp.Method, hp.Path))
+	defer span.End()
+
 	var req *http.Request
 	var err error
 	if hp.Method == http.MethodGet {
-		req, err = http.NewRequest(http.MethodGet, InternalServer+hp.Path, nil)
+		req, err = http.NewRequestWithContext(ctx, http.MethodGet, InternalServer+hp.Path, nil)
 		if err != nil {
 			return fmt.Errorf("invalid request, detail -> %s", err.Error())
 		}
@@ -96,7 +105,7 @@ func DoHTTP(in interface{}, out interface{}, hp *HTTPParam) error {
 		if err != nil {
 			return fmt.Errorf("invalid request, detail -> %s", err.Error())
 		}
-		req, err = http.NewRequest(hp.Method, InternalServer+hp.Path, bytes.NewBuffer(inbody))
+		req, err = http.NewRequestWithContext(ctx, hp.Method, InternalServer+hp.Path, bytes.NewBuffer(inbody))
 		if err != nil {
 			return fmt.Errorf("invalid request, detail -> %s", err.Error())
 		}
@@ -109,7 +118,9 @@ func DoHTTP(in interface{}, out interface{}, hp *HTTPParam) error {
 	for key, val := range hp.Headers {
 		req.Header.Set(key, val)
 	}
-	client := &http.Client{}
+
+	client := &http.Client{Transport: otelhttp.NewTransport(http.DefaultTransport)}
+
 	resp, err := client.Do(req)
 	if err != nil {
 		return fmt.Errorf("send request error, detail -> %s", err.Error())

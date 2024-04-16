@@ -53,7 +53,7 @@ type RegisterJwtClaims struct {
 	jwt.RegisteredClaims
 }
 
-func RegisterDomain(namespace, path, csrData string, prikey *rsa.PrivateKey, afterRegisterHook AfterRegisterDomainHook) error {
+func RegisterDomain(ctx context.Context, namespace, path, csrData string, prikey *rsa.PrivateKey, afterRegisterHook AfterRegisterDomainHook) error {
 	regReq := &handshake.RegisterRequest{
 		DomainId:    namespace,
 		Csr:         base64.StdEncoding.EncodeToString([]byte(csrData)),
@@ -79,7 +79,7 @@ func RegisterDomain(namespace, path, csrData string, prikey *rsa.PrivateKey, aft
 		"jwt-token": tokenstr,
 	}
 	registerPath := fmt.Sprintf("%s%s", strings.TrimSuffix(path, "/"), "/register")
-	err = doHTTPWithDefaultRetry(regReq, regResp, &utils.HTTPParam{
+	err = doHTTPWithDefaultRetry(ctx, regReq, regResp, &utils.HTTPParam{
 		Method:       http.MethodPost,
 		Path:         registerPath,
 		KusciaSource: namespace,

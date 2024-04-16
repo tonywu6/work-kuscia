@@ -1,6 +1,22 @@
 services:
   otel-collector:
-    image: jaegertracing/all-in-one:1.56
+    image: otel/opentelemetry-collector:latest
+    command:
+      - --config=/etc/otelcol/config.yaml
+    networks:
+      - kuscia
+    volumes:
+      - ./common/etc/otelcol/config.yaml:/etc/otelcol/config.yaml
+
+  zipkin:
+    image: openzipkin/zipkin:latest
+    networks:
+      - kuscia
+    ports:
+      - '9411:9411'
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
     networks:
       - kuscia
     ports:
@@ -14,37 +30,28 @@ services:
 
     networks:
       - kuscia
+
     ports:
-      # # Kubernetes API Server
-      # - '1080'
-      # # Kuscia API HTTP
-      # - '8082'
-      # # Kuscia API gRPC
-      # - '8083'
-      # Prometheus
-      - '9091'
+      - 19091:9091
+      - 19092:9092
 
     privileged: true
 
     command:
       - /home/kuscia/bin/kuscia-bootstrap
-
       - --self
       - kuscia-1
-
       - --peer
       - kuscia-2
-
       # - --load-image
       # - /home/kuscia/mnt/public/secretflow-image.yml
-
       # - --load-data
       # - /home/kuscia/mnt/private/demo-table.yml
 
     volumes:
-      # - type: volume
-      #   source: var1
-      #   target: /home/kuscia/var
+      - type: volume
+        source: varlogs1
+        target: /home/kuscia/var/logs
       - type: volume
         source: containerd1
         target: /home/kuscia/containerd
@@ -64,37 +71,28 @@ services:
 
     networks:
       - kuscia
+
     ports:
-      # # Kubernetes API Server
-      # - '1080'
-      # # Kuscia API HTTP
-      # - '8082'
-      # # Kuscia API gRPC
-      # - '8083'
-      # Prometheus
-      - '9091'
+      - 29091:9091
+      - 29092:9092
 
     privileged: true
 
     command:
       - /home/kuscia/bin/kuscia-bootstrap
-
       - --self
       - kuscia-2
-
       - --peer
       - kuscia-1
-
       # - --load-image
       # - /home/kuscia/mnt/public/secretflow-image.yml
-
       # - --load-data
       # - /home/kuscia/mnt/private/demo-table.yml
 
     volumes:
-      # - type: volume
-      #   source: var2
-      #   target: /home/kuscia/var
+      - type: volume
+        source: varlogs2
+        target: /home/kuscia/var/logs
       - type: volume
         source: containerd2
         target: /home/kuscia/containerd
@@ -136,5 +134,5 @@ volumes:
   containerd1:
   containerd2:
   shared:
-  # var1:
-  # var2:
+  varlogs1:
+  varlogs2:

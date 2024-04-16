@@ -16,6 +16,7 @@ package start
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -24,6 +25,7 @@ import (
 	"github.com/secretflow/kuscia/cmd/kuscia/confloader"
 	"github.com/secretflow/kuscia/cmd/kuscia/lite"
 	"github.com/secretflow/kuscia/cmd/kuscia/master"
+	"github.com/secretflow/kuscia/pkg/otel"
 	"github.com/secretflow/kuscia/pkg/utils/nlog"
 )
 
@@ -37,6 +39,13 @@ func NewStartCommand(ctx context.Context) *cobra.Command {
 		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			commonConfig := confloader.LoadCommonConfig(configFile)
+
+			traceShutdown, err := otel.InitTraceProvider(fmt.Sprintf("kuscia-%s", commonConfig.DomainID))
+			if err != nil {
+				return err
+			}
+			defer traceShutdown(ctx)
+
 			mode := strings.ToLower(commonConfig.Mode)
 			switch mode {
 			case "lite":

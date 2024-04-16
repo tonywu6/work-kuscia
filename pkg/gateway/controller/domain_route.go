@@ -214,7 +214,7 @@ func (c *DomainRouteController) checkConnectionHealthy(ctx context.Context, stop
 				if dr.Spec.AuthenticationType == kusciaapisv1alpha1.DomainAuthenticationToken && dr.Spec.Source == c.gateway.Namespace &&
 					dr.Status.TokenStatus.RevisionInitializer == c.gateway.Name && dr.Status.TokenStatus.RevisionToken.Token != "" {
 					nlog.Debugf("checkConnectionHealthy of dr(%s)", dr.Name)
-					err := c.checkConnectionStatus(dr, c.getDefaultClusterNameByDomainRoute(dr))
+					err := c.checkConnectionStatus(ctx, dr, c.getDefaultClusterNameByDomainRoute(dr))
 					if err != nil {
 						nlog.Warn(err)
 					}
@@ -274,7 +274,7 @@ func (c *DomainRouteController) syncHandler(ctx context.Context, key string) err
 						}
 						nlog.Infof("DomainRoute %s starts handshake, the last revision is %d", key, dr.Status.TokenStatus.RevisionToken.Revision)
 
-						return c.sourceInitiateHandShake(dr, c.getDefaultClusterNameByDomainRoute(dr))
+						return c.sourceInitiateHandShake(ctx, dr, c.getDefaultClusterNameByDomainRoute(dr))
 					}(); err != nil {
 						nlog.Error(err)
 						return err

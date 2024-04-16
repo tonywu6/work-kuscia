@@ -301,14 +301,12 @@ func domainRouteIsReady(route *kusciacrd.ClusterDomainRoute) bool {
 }
 
 func run(options ClusterOptions) {
-	if _, err := os.Stat(confPath); err == nil {
-		zap.S().Info("preserving existing configuration")
-	} else {
-		config := newKusciaConfig(options)
-		ensureParent(confPath)
-		if err := os.WriteFile(confPath, config, 0644); err != nil {
-			zap.L().Fatal("failed to write config", zap.Error(err))
-		}
+	os.RemoveAll("/home/kuscia/var")
+
+	config := newKusciaConfig(options)
+	ensureParent(confPath)
+	if err := os.WriteFile(confPath, config, 0644); err != nil {
+		zap.L().Fatal("failed to write config", zap.Error(err))
 	}
 
 	ensureParent(stdoutPath)
@@ -515,7 +513,7 @@ func run(options ClusterOptions) {
 				AuthenticationType: kusciacrd.DomainAuthenticationToken,
 				TokenConfig: &kusciacrd.TokenConfig{
 					TokenGenMethod:      kusciacrd.TokenGenMethodRSA,
-					RollingUpdatePeriod: 60,
+					RollingUpdatePeriod: 15,
 				},
 			},
 		},

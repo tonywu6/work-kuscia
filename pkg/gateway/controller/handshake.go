@@ -82,8 +82,8 @@ func (c *DomainRouteController) startHandShakeServer(port uint32) {
 	nlog.Error(c.handshakeServer.ListenAndServe())
 }
 
-func doHTTPWithDefaultRetry(in interface{}, out interface{}, hp *utils.HTTPParam) error {
-	return utils.DoHTTPWithRetry(in, out, hp, time.Second, 5)
+func doHTTPWithDefaultRetry(ctx context.Context, in interface{}, out interface{}, hp *utils.HTTPParam) error {
+	return utils.DoHTTPWithRetry(ctx, in, out, hp, time.Second, 5)
 }
 
 func (c *DomainRouteController) waitTokenReady(drName string) error {
@@ -110,7 +110,7 @@ func (c *DomainRouteController) waitTokenReady(drName string) error {
 	return fmt.Errorf("wait dr %s token ready failed at max retry times:%d", drName, maxRetryTimes)
 }
 
-func (c *DomainRouteController) checkConnectionStatus(dr *kusciaapisv1alpha1.DomainRoute, clusterName string) error {
+func (c *DomainRouteController) checkConnectionStatus(ctx context.Context, dr *kusciaapisv1alpha1.DomainRoute, clusterName string) error {
 	out := &getResponse{}
 	headers := map[string]string{
 		kusciaTokenRevision: fmt.Sprintf("%d", dr.Status.TokenStatus.RevisionToken.Revision),
@@ -128,7 +128,7 @@ func (c *DomainRouteController) checkConnectionStatus(dr *kusciaapisv1alpha1.Dom
 		KusciaHost:   getHandshakeHost(dr),
 		KusciaSource: dr.Spec.Source,
 		Headers:      headers}
-	err := utils.DoHTTP(nil, out, hp)
+	err := utils.DoHTTP(ctx, nil, out, hp)
 	if err != nil {
 		c.markDestUnreachable(context.Background(), dr)
 		return err
@@ -200,7 +200,7 @@ func calcPublicKeyHash(pubStr string) ([]byte, error) {
 	return msgHash.Sum(nil), nil
 }
 
-func (c *DomainRouteController) sourceInitiateHandShake(dr *kusciaapisv1alpha1.DomainRoute, clusterName string) error {
+func (c *DomainRouteController) sourceInitiateHandShake(ctx context.Context, dr *kusciaapisv1alpha1.DomainRoute, clusterName string) error {
 	if dr.Spec.TokenConfig.SourcePublicKey != c.gateway.Status.PublicKey {
 		nlog.Errorf("DomainRoute %s: mismatch source public key", dr.Name)
 		return nil
@@ -220,7 +220,7 @@ func (c *DomainRouteController) sourceInitiateHandShake(dr *kusciaapisv1alpha1.D
 	if dr.Spec.TokenConfig.TokenGenMethod == kusciaapisv1alpha1.TokenGenUIDRSA {
 		handshankeReq.Type = handShakeTypeUID
 		handshakePath := utils.GetHandshakePathOfEndpoint(dr.Spec.Endpoint)
-		err := doHTTPWithDefaultRetry(handshankeReq, resp, &utils.HTTPParam{
+		err := doHTTPWithDefaultRetry(ctx, handshankeReq, resp, &utils.HTTPParam{
 			Method:       http.MethodPost,
 			Path:         handshakePath,
 			KusciaSource: dr.Spec.Source,
@@ -279,7 +279,7 @@ func (c *DomainRouteController) sourceInitiateHandShake(dr *kusciaapisv1alpha1.D
 		}
 
 		handshakePath := utils.GetHandshakePathOfEndpoint(dr.Spec.Endpoint)
-		err = doHTTPWithDefaultRetry(handshankeReq, resp, &utils.HTTPParam{
+		err = doHTTPWithDefaultRetry(ctx, handshankeReq, resp, &utils.HTTPParam{
 			Method:       http.MethodPost,
 			Path:         handshakePath,
 			KusciaSource: dr.Spec.Source,
@@ -671,7 +671,7 @@ func exists(slice []string, val string) bool {
 	return false
 }
 
-func HandshakeToMaster(domainID string, pathPrefix string, prikey *rsa.PrivateKey) error {
+func HandshakeToMaster(ctx context.Context, domainID string, pathPrefix string, prikey *rsa.PrivateKey) error {
 	handshankeReq := &handshake.HandShakeRequest{
 		DomainId:    domainID,
 		RequestTime: time.Now().UnixNano(),
@@ -688,7 +688,7 @@ func HandshakeToMaster(domainID string, pathPrefix string, prikey *rsa.PrivateKe
 	maxRetryTimes := 50
 	for i := 0; i < maxRetryTimes; i++ {
 		resp = &handshake.HandShakeResponse{}
-		err := utils.DoHTTP(handshankeReq, resp, &utils.HTTPParam{
+		err := utils.DoHTTP(ctx, handshankeReq, resp, &utils.HTTPParam{
 			Method:       http.MethodPost,
 			Path:         handshakePath,
 			KusciaSource: domainID,

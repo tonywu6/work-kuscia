@@ -83,9 +83,11 @@
                                 "name": "envoy.tracers.zipkin",
                                 "typed_config": {
                                     "@type": "type.googleapis.com/envoy.config.trace.v3.ZipkinConfig",
-                                    "collector_cluster": "internal-cluster",
-                                    "collector_endpoint": "/zipkin/api/v2/spans",
-                                    "collector_endpoint_version": "HTTP_JSON"
+                                    "collector_cluster": "otel-collector",
+                                    "collector_endpoint": "/api/v2/spans",
+                                    "collector_endpoint_version": "HTTP_JSON",
+                                    "shared_span_context": false,
+                                    "split_spans_for_request": true
                                 }
                             }
                         },

@@ -248,15 +248,15 @@ func generateDefaultCluster(name string, config *config.ClusterConfig) (*envoycl
 	return cluster, nil
 }
 
-func getMasterNamespace(soure string, pathPrefix string) (string, error) {
+func getMasterNamespace(ctx context.Context, source string, pathPrefix string) (string, error) {
 	kusciaStatus := map[string]interface{}{}
 	handshakePath := utils.GetHandshakePathOfPrefix(pathPrefix)
-	err := utils.DoHTTP(nil, &kusciaStatus, &utils.HTTPParam{
+	err := utils.DoHTTP(ctx, nil, &kusciaStatus, &utils.HTTPParam{
 		Method:       http.MethodGet,
 		Path:         handshakePath,
 		KusciaHost:   fmt.Sprintf("%s.master.svc", utils.ServiceHandshake),
 		ClusterName:  GetMasterClusterName(),
-		KusciaSource: soure,
+		KusciaSource: source,
 	})
 	if err != nil {
 		return "", err
@@ -273,7 +273,7 @@ func waitMasterProxyReady(ctx context.Context, path string, config *config.Maste
 	for {
 		select {
 		case <-ticker.C:
-			masterNamespace, err := getMasterNamespace(namespace, path)
+			masterNamespace, err := getMasterNamespace(ctx, namespace, path)
 			if err == nil {
 				nlog.Infof("Get master gateway namespace: %s", masterNamespace)
 				config.Namespace = masterNamespace
