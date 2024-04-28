@@ -9,18 +9,27 @@ RUN git init \
   && rm -rf .git \
   && rm -r /src/build/dockerfile
 
-FROM golang:1.21.4 as build-kuscia
+FROM golang:1.22.1 as build-kuscia
 
 WORKDIR /src
 
-COPY --from=source-tree /src/go.mod /src/go.sum ./
+COPY --from=source-tree \
+  /src/go.work \
+  /src/go.work.sum \
+  /src/go.mod \
+  /src/go.sum \
+  ./
+COPY --from=source-tree \
+  /src/examples/bootstrap/go.mod \
+  /src/examples/bootstrap/go.sum \
+  /src/examples/bootstrap/
 
 RUN go mod download
 
 COPY --from=source-tree /src/ ./
 
 RUN go build -o build/apps/kuscia/kuscia ./cmd/kuscia
-RUN go build -o build/apps/kuscia/kuscia-bootstrap ./cmd/bootstrap
+RUN go build -o build/apps/kuscia/kuscia-bootstrap ./examples/bootstrap
 
 FROM tonywu6/kuscia-envoy:linux-arm64 as image-kuscia-envoy
 

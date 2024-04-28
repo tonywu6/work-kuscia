@@ -26,6 +26,7 @@ import (
 	"strconv"
 	"time"
 
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/tools/cache"
@@ -69,9 +70,9 @@ type AfterRegisterDomainHook func(response *handshake.RegisterResponse)
 
 func (c *DomainRouteController) startHandShakeServer(port uint32) {
 	mux := http.NewServeMux()
-	mux.HandleFunc(utils.GetHandshakePathSuffix(), c.handShakeHandle)
+	mux.Handle(utils.GetHandshakePathSuffix(), otelhttp.NewHandler(http.HandlerFunc(c.handShakeHandle), "handshake"))
 	if c.masterConfig != nil && c.masterConfig.Master {
-		mux.HandleFunc("/register", c.registerHandle)
+		mux.Handle("/register", otelhttp.NewHandler(http.HandlerFunc(c.registerHandle), "/register"))
 	}
 
 	c.handshakeServer = &http.Server{

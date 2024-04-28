@@ -25,7 +25,6 @@ import (
 	"strings"
 	"time"
 
-	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel"
 )
 
@@ -119,7 +118,7 @@ func DoHTTP(ctx context.Context, in interface{}, out interface{}, hp *HTTPParam)
 		req.Header.Set(key, val)
 	}
 
-	client := &http.Client{Transport: otelhttp.NewTransport(http.DefaultTransport)}
+	client := &http.Client{}
 
 	resp, err := client.Do(req)
 	if err != nil {

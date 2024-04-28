@@ -18,7 +18,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.0.0
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da
 	github.com/golang/mock v1.6.0
-	github.com/golang/protobuf v1.5.3
+	github.com/golang/protobuf v1.5.4
 	github.com/google/go-cmp v0.6.0
 	github.com/google/uuid v1.3.1
 	github.com/json-iterator/go v1.1.12
@@ -36,7 +36,7 @@ require (
 	github.com/rosedblabs/rosedb/v2 v2.3.2
 	github.com/secretflow/kuscia-envoy v0.0.0-20230705094915-8e153baebabc
 	github.com/shirou/gopsutil/v3 v3.22.6
-	github.com/spf13/cobra v1.6.1
+	github.com/spf13/cobra v1.8.0
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.9.0
 	github.com/tidwall/match v1.1.1
@@ -48,11 +48,11 @@ require (
 	go.opentelemetry.io/otel/sdk v1.25.0
 	go.uber.org/atomic v1.9.0
 	go.uber.org/zap v1.27.0
-	golang.org/x/net v0.17.0
+	golang.org/x/net v0.19.0
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20231030173426-d783a09b4405
 	google.golang.org/grpc v1.59.0
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.3.0
-	google.golang.org/protobuf v1.31.0
+	google.golang.org/protobuf v1.33.0
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.1
@@ -66,11 +66,11 @@ require (
 	k8s.io/component-base v0.26.11
 	k8s.io/component-helpers v0.26.11
 	k8s.io/cri-api v0.17.3
-	k8s.io/klog/v2 v2.80.1
+	k8s.io/klog/v2 v2.110.1
 	k8s.io/kubectl v0.0.0
 	k8s.io/kubelet v0.26.11
 	k8s.io/kubernetes v1.26.11
-	k8s.io/utils v0.0.0-20221107191617-1a15be271d1d
+	k8s.io/utils v0.0.0-20230726121419-3b25d923346b
 	sigs.k8s.io/controller-tools v0.9.2
 	sigs.k8s.io/yaml v1.3.0
 
@@ -80,7 +80,7 @@ require (
 	github.com/lufia/plan9stats v0.0.0-20220517141722-cf486979b281 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
 	github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c // indirect
-	sigs.k8s.io/json v0.0.0-20220713155537-f223a00ba0e2 // indirect
+	sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd // indirect
 )
 
 require (
@@ -157,7 +157,7 @@ require (
 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.4 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
-	github.com/inconshreveable/mousetrap v1.0.1 // indirect
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/infobloxopen/go-trees v0.0.0-20200715205103-96a057b8dfb9 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/jonboulle/clockwork v0.2.2 // indirect
@@ -246,14 +246,14 @@ require (
 	k8s.io/gengo v0.0.0-20220902162205-c0856e24416d // indirect
 	k8s.io/kms v0.26.11 // indirect
 	k8s.io/kube-openapi v0.0.0-20221012153701-172d655c2280 // indirect
-	k8s.io/kube-scheduler v0.0.0 // indirect
+	k8s.io/kube-scheduler v0.26.11 // indirect
 	k8s.io/metrics v0.26.11 // indirect
 	k8s.io/mount-utils v0.0.0 // indirect
 	sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.0.37 // indirect
 	sigs.k8s.io/kustomize/api v0.12.1 // indirect
 	sigs.k8s.io/kustomize/kustomize/v4 v4.5.7 // indirect
 	sigs.k8s.io/kustomize/kyaml v0.13.9 // indirect
-	sigs.k8s.io/structured-merge-diff/v4 v4.2.3 // indirect
+	sigs.k8s.io/structured-merge-diff/v4 v4.4.1 // indirect
 )
 
 replace (

@@ -68,6 +68,7 @@ const (
 	LabelPodUID          = "kuscia.secretflow/pod-uid"
 	LabelOwnerReferences = "kuscia.secretflow/owner-references"
 
+	// FIXME: typo
 	LabelDomainRoutePartner = "kuscia.secertflow/domainroute-partner"
 )
 

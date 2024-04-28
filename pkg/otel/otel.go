@@ -2,10 +2,12 @@ package otel
 
 import (
 	"context"
+	"net/http"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/contrib/propagators/b3"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
@@ -47,6 +49,8 @@ func InitTraceProvider(service string) (shutdown func(context.Context) error, er
 	otel.SetTracerProvider(provider)
 
 	otel.SetTextMapPropagator(b3.New())
+
+	http.DefaultTransport = otelhttp.NewTransport(http.DefaultTransport)
 
 	return provider.Shutdown, nil
 }

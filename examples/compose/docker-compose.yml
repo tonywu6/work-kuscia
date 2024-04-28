@@ -1,37 +1,15 @@
 services:
-  otel-collector:
-    image: otel/opentelemetry-collector:latest
-    command:
-      - --config=/etc/otelcol/config.yaml
-    networks:
-      - kuscia
-    volumes:
-      - ./common/etc/otelcol/config.yaml:/etc/otelcol/config.yaml
-
-  zipkin:
-    image: openzipkin/zipkin:latest
-    networks:
-      - kuscia
-    ports:
-      - '9411:9411'
-
-  jaeger:
-    image: jaegertracing/all-in-one:latest
-    networks:
-      - kuscia
-    ports:
-      - '16686:16686'
-
   kuscia-1:
     image: tonywu6/kuscia:linux-arm64
     build:
-      context: ../../../
-      dockerfile: ./build/dockerfile/kuscia-arm64.Dockerfile
+      context: ../../
+      dockerfile: examples/arm64/kuscia-arm64.Dockerfile
 
     networks:
       - kuscia
 
     ports:
+      - 19000:10000
       - 19091:9091
       - 19092:9092
 
@@ -43,8 +21,8 @@ services:
       - kuscia-1
       - --peer
       - kuscia-2
-      # - --load-image
-      # - /home/kuscia/mnt/public/secretflow-image.yml
+      - --load-image
+      - /home/kuscia/mnt/public/secretflow-image.yml
       # - --load-data
       # - /home/kuscia/mnt/private/demo-table.yml
 
@@ -66,8 +44,8 @@ services:
   kuscia-2:
     image: tonywu6/kuscia:linux-arm64
     build:
-      context: ../../../
-      dockerfile: ./build/dockerfile/kuscia-arm64.Dockerfile
+      context: ../../
+      dockerfile: examples/arm64/kuscia-arm64.Dockerfile
 
     networks:
       - kuscia
@@ -84,8 +62,8 @@ services:
       - kuscia-2
       - --peer
       - kuscia-1
-      # - --load-image
-      # - /home/kuscia/mnt/public/secretflow-image.yml
+      - --load-image
+      - /home/kuscia/mnt/public/secretflow-image.yml
       # - --load-data
       # - /home/kuscia/mnt/private/demo-table.yml
 
@@ -110,7 +88,7 @@ services:
     networks:
       - kuscia
     ports:
-      - '9090:9090'
+      - "9090:9090"
     volumes:
       - ./common/etc/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
 
@@ -119,13 +97,36 @@ services:
     networks:
       - kuscia
     ports:
-      - '3000:3000'
+      - "3000:3000"
     volumes:
       - ./common/etc/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
       - ./common/etc/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
       - type: bind
         source: ./common/var/lib/grafana
         target: /var/lib/grafana
+
+  otel-collector:
+    image: otel/opentelemetry-collector:latest
+    command:
+      - --config=/etc/otelcol/config.yaml
+    networks:
+      - kuscia
+    volumes:
+      - ./common/etc/otelcol/config.yaml:/etc/otelcol/config.yaml
+
+  zipkin:
+    image: openzipkin/zipkin:latest
+    networks:
+      - kuscia
+    ports:
+      - "9411:9411"
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    networks:
+      - kuscia
+    ports:
+      - "16686:16686"
 
 networks:
   kuscia:

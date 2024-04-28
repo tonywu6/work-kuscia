@@ -23,6 +23,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 
 	"github.com/secretflow/kuscia/pkg/utils/nlog"
 	"github.com/secretflow/kuscia/pkg/utils/nlog/zlogwriter"
@@ -106,9 +107,9 @@ func (b *GinBean) Init(e framework.ConfBeanRegistry) error {
 
 func (b *GinBean) Start(ctx context.Context, e framework.ConfBeanRegistry) error {
 	mux := http.NewServeMux()
-	mux.Handle("/", b.Engine)
-	normalizeConfig(&b.GinBeanConfig)
+	mux.Handle("/", otelhttp.NewHandler(b.Engine, "web"))
 	addr := fmt.Sprintf(":%d", b.Port)
+	normalizeConfig(&b.GinBeanConfig)
 	if b.IP != "" {
 		addr = fmt.Sprintf("%s:%d", b.IP, b.Port)
 	}
